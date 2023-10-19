@@ -32,6 +32,7 @@ fn benchmark[D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]) -> None](
     print(",", size, ",", max, ",", min_duration, ",", Float64(min_duration.to_int()) / Float64(size))
 
 fn main():
-    for i in range(8, 1 << 16, 8):
-        benchmark[DType.int64, scalar_prefix_sum[DType.int64]]("Scalar", i, 10)
-        # benchmark[DType.int8, simd_prefix_sum[DType.int8]]("SIMD", i, 10)
+    alias D = DType.int64
+    for i in range(8, (1 << 16) + 1, 8):
+        # benchmark[D, scalar_prefix_sum[D]]("Scalar", i, 10)
+        benchmark[D, simd_prefix_sum[D]]("SIMD", i, 10)

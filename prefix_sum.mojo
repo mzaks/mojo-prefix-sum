@@ -52,7 +52,7 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
 
     @parameter
     if D == DType.uint32 or D == DType.int32 or D == DType.float32:
-        inner_func[64, 4, 4]()
+        inner_func[64, 4, 6]()
     elif D == DType.uint16 or D == DType.int16 or D == DType.float16:
         inner_func[128, 2, 7]()
     elif D == DType.uint8 or D == DType.int8:
@@ -63,15 +63,16 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
     
 
 fn main():
+    alias D = DType.uint64
     let length = (1 << 8) + 157
-    var v1 = DynamicVector[UInt16](length)
-    var v2 = DynamicVector[UInt16](length)
+    var v1 = DynamicVector[SIMD[D, 1]](length)
+    var v2 = DynamicVector[SIMD[D, 1]](length)
     for i in range(1, length + 1):
         v1.push_back(i)
         v2.push_back(i)
 
-    scalar_prefix_sum[DType.uint16](v1)
-    simd_prefix_sum[DType.uint16](v2)
+    scalar_prefix_sum[D](v1)
+    simd_prefix_sum[D](v2)
 
     for i in range(length):
         if v1[i] != v2[i]:
