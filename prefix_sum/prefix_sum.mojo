@@ -1,6 +1,5 @@
 from algorithm import unroll
 # from math.bit import bit_length
-from vector_utils import vector
 
 @always_inline
 fn scalar_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
@@ -59,23 +58,3 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
         inner_func[256, 1, 8]()
     else:
         inner_func[32, 8, 5]()
-    
-    
-
-fn main():
-    alias D = DType.uint64
-    let length = (1 << 8) + 157
-    var v1 = DynamicVector[SIMD[D, 1]](length)
-    var v2 = DynamicVector[SIMD[D, 1]](length)
-    for i in range(1, length + 1):
-        v1.push_back(i)
-        v2.push_back(i)
-
-    scalar_prefix_sum[D](v1)
-    simd_prefix_sum[D](v2)
-
-    for i in range(length):
-        if v1[i] != v2[i]:
-            print("Index", i, "is not equal")
-
-    print("Done!!!")
