@@ -27,7 +27,7 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
     @parameter 
     fn inner_func[width: Int, alignment: Int, loops: Int]():
         let length = len(array)
-        let numbers = DTypePointer[D](array.data)
+        let numbers = DTypePointer[D](array.data.value)
         var c: SIMD[D, 1] = 0
         var i = 0
 

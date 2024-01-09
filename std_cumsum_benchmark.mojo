@@ -4,15 +4,15 @@ from math import min
 from math.limit import max_or_inf
 from prefix_sum import scalar_prefix_sum, simd_prefix_sum
 from prefix_sum_benchmark import benchmark
-from vector_utils import print_v
 from csv import CsvBuilder
+from utils.list import Dim
 
 fn benchmark_other[size: Int, D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]) -> None](name: StringLiteral, inout csv_builder: CsvBuilder):
     var min_duration = max_or_inf[DType.int64]()
     var value = 0
     for _ in range(10):
         var v1 = DynamicVector[SIMD[D, 1]](size)
-        v1.resize(size)
+        v1.resize(size, 0)
         for i in range(size):
             v1[i] = i % 4 == 0
         let tik = now()

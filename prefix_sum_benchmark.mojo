@@ -21,10 +21,10 @@ fn benchmark[D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]) -> None](
     name: StringLiteral, inout csv_builder: CsvBuilder, size: Int, max: Int = 3000
 ):
     let v = random_vec[D](size, max)
-    var v1 = v.deepcopy()
+    var v1 = v
     var min_duration = max_or_inf[DType.int64]()
     for _ in range(10):
-        v1 = v.deepcopy()
+        v1 = v
         let tik = now()
         func(v1)
         let tok = now()
