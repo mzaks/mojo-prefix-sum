@@ -68,6 +68,7 @@ fn main():
     benchmark_std[1 << 16, DType.int16](csv_builder)
     benchmark_std[1 << 16, DType.int32](csv_builder)
     benchmark_std[1 << 16, DType.int64](csv_builder)
+    benchmark_std[1 << 24, DType.int64](csv_builder)
 
     benchmark_other[1 << 8, DType.int8, scalar_prefix_sum[DType.int8]]("Scalar", csv_builder)
     benchmark_other[1 << 8, DType.int16, scalar_prefix_sum[DType.int16]]("Scalar", csv_builder)
@@ -85,6 +86,7 @@ fn main():
     benchmark_other[1 << 16, DType.int16, scalar_prefix_sum[DType.int16]]("Scalar", csv_builder)
     benchmark_other[1 << 16, DType.int32, scalar_prefix_sum[DType.int32]]("Scalar", csv_builder)
     benchmark_other[1 << 16, DType.int64, scalar_prefix_sum[DType.int64]]("Scalar", csv_builder)
+    benchmark_other[1 << 24, DType.int64, scalar_prefix_sum[DType.int64]]("Scalar", csv_builder)
 
     benchmark_other[1 << 8, DType.int8, simd_prefix_sum[DType.int8]]("SIMD", csv_builder)
     benchmark_other[1 << 8, DType.int16, simd_prefix_sum[DType.int16]]("SIMD", csv_builder)
@@ -102,6 +104,7 @@ fn main():
     benchmark_other[1 << 16, DType.int16, simd_prefix_sum[DType.int16]]("SIMD", csv_builder)
     benchmark_other[1 << 16, DType.int32, simd_prefix_sum[DType.int32]]("SIMD", csv_builder)
     benchmark_other[1 << 16, DType.int64, simd_prefix_sum[DType.int64]]("SIMD", csv_builder)
+    benchmark_other[1 << 24, DType.int64, simd_prefix_sum[DType.int64]]("SIMD", csv_builder)
 
     print(csv_builder^.finish())
     

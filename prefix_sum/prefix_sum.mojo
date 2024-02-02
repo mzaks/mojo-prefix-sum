@@ -51,10 +51,14 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
 
     @parameter
     if D == DType.uint32 or D == DType.int32 or D == DType.float32:
-        inner_func[64, 4, 6]()
+        alias loops = 6
+        inner_func[1 << loops, 4, loops]()
     elif D == DType.uint16 or D == DType.int16 or D == DType.float16:
-        inner_func[128, 2, 7]()
+        alias loops = 7
+        inner_func[1 << loops, 2, loops]()
     elif D == DType.uint8 or D == DType.int8:
-        inner_func[256, 1, 8]()
+        alias loops = 8
+        inner_func[1 << loops, 1, loops]()
     else:
-        inner_func[32, 8, 5]()
+        alias loops = 5
+        inner_func[1 << loops, 8, loops]()

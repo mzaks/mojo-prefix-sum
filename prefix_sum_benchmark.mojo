@@ -37,9 +37,10 @@ fn benchmark[D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]) -> None](
     csv_builder.push(Float64(min_duration.to_int()) / Float64(size))
 
 fn main():
-    alias D = DType.int8
+    alias D = DType.int32
     var csv_builder = CsvBuilder(5)
-    for i in range(8, (1 << 16) + 1, 256):
+    for i in range(8, (1 << 10) + 1, 1):
         benchmark[D, scalar_prefix_sum[D]]("Scalar", csv_builder, i, 10)
+        benchmark[D, simd_prefix_sum[D]]("SIMD", csv_builder, i, 10)
 
     print(csv_builder^.finish())
