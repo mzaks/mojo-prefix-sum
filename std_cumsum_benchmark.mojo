@@ -11,7 +11,7 @@ fn benchmark_other[size: Int, D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]
     var min_duration = max_or_inf[DType.int64]()
     var value = 0
     for _ in range(10):
-        var v1 = DynamicVector[SIMD[D, 1]](size)
+        var v1 = DynamicVector[SIMD[D, 1]](capacity=size)
         v1.resize(size, 0)
         for i in range(size):
             v1[i] = i % 4 == 0
@@ -32,14 +32,14 @@ fn benchmark_std[size: Int, D: DType](inout csv_builder: CsvBuilder):
     var value = 0
     for _ in range(10):
         let p1 = DTypePointer[D].alloc(size)
-        let b1 = Buffer[Dim(size), D](p1)
+        let b1 = Buffer[D, Dim(size)](p1)
         let p2 = DTypePointer[D].alloc(size)
-        let b2 = Buffer[Dim(size), D](p2)
+        let b2 = Buffer[D, Dim(size)](p2)
         for i in range(size):
             b1[i] = i % 4 == 0
         
         let tik = now()
-        cumsum[size, D](b2, b1)
+        cumsum(b2, b1)
         let tok = now()
         min_duration = min(min_duration, tok - tik)
         value = b2[size - 1].to_int()

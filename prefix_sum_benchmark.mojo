@@ -6,7 +6,7 @@ from prefix_sum import scalar_prefix_sum, simd_prefix_sum
 from csv import CsvBuilder
 
 fn random_vec[D: DType](size: Int, max: Int = 3000) -> DynamicVector[SIMD[D, 1]]:
-    var result = DynamicVector[SIMD[D, 1]](size)
+    var result = DynamicVector[SIMD[D, 1]](capacity=size)
     for _ in range(size):
         @parameter
         if D == DType.int8 or D == DType.int16 or D == DType.int32 or D == DType.int64:

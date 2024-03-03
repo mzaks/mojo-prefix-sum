@@ -16,7 +16,7 @@ fn _sum[width: Int, alignment: Int, loops: Int, D: DType](pointer: DTypePointer[
     fn add[i: Int]():
         result += result.shift_right[1 << i]()
     
-    unroll[loops, add]()
+    unroll[add, loops]()
 
     result += carry_over
     return result
@@ -26,8 +26,8 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
     
     @parameter 
     fn inner_func[width: Int, alignment: Int, loops: Int]():
-        let length = len(array)
-        let numbers = DTypePointer[D](array.data.value)
+        var length = len(array)
+        var numbers = DTypePointer[D](array.data.value)
         var c: SIMD[D, 1] = 0
         var i = 0
 
@@ -47,7 +47,7 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
                 numbers.simd_store(i, part)
                 i += w    
 
-        unroll[loops, add_rest]()
+        unroll[add_rest, loops]()
 
     @parameter
     if D == DType.uint32 or D == DType.int32 or D == DType.float32:

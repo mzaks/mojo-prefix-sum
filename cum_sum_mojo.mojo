@@ -3,22 +3,23 @@ from time import now
 from testing import assert_equal
 import benchmark
 
-alias LIST_SIZE = 1_000_000
+alias LIST_SIZE = 10_000
 
 alias dtype = DType.int64
 alias type = SIMD[dtype, 1]
 alias rounds = 10
 
 fn scalar() -> DynamicVector[type]:
-    var list = DynamicVector[type](LIST_SIZE)
+    var list = DynamicVector[type](capacity=LIST_SIZE)
     var min_duration = 10000000
+    var result = 0
     for _ in range(rounds):
-        list = DynamicVector[type](LIST_SIZE)
+        list = DynamicVector[type](capacity=LIST_SIZE)
         for _ in range(LIST_SIZE):
             list.append(1)
         let tik = now()
         scalar_prefix_sum[dtype](list)
-        let tok = now()
+        let tok = now()     
         min_duration = tok - tik if (tok - tik) < min_duration else min_duration
 
     print("Scalar prefix over a vector with", LIST_SIZE, "items in", min_duration, "ns,", Float64(min_duration) / LIST_SIZE, "ns per item")
@@ -26,10 +27,10 @@ fn scalar() -> DynamicVector[type]:
     return list
 
 fn simd() -> DynamicVector[type]:
-    var list = DynamicVector[type](LIST_SIZE)
+    var list = DynamicVector[type](capacity=LIST_SIZE)
     var min_duration = 10000000
     for _ in range(rounds):
-        list = DynamicVector[type](LIST_SIZE)
+        list = DynamicVector[type](capacity=LIST_SIZE)
         for _ in range(LIST_SIZE):
             list.append(1)
         let tik = now()
