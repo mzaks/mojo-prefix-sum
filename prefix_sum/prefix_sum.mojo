@@ -1,8 +1,7 @@
-from algorithm import unroll
-# from math.bit import bit_length
+from utils.loop import unroll
 
 @always_inline
-fn scalar_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
+fn scalar_prefix_sum[D: DType](inout array: List[SIMD[D, 1]]):
     var element = array[0]
     for i in range(1, len(array)):
         array[i] += element
@@ -10,7 +9,7 @@ fn scalar_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
 
 @always_inline
 fn _sum[width: Int, alignment: Int, loops: Int, D: DType](pointer: DTypePointer[D], carry_over: SIMD[D, 1]) -> SIMD[D, width]:
-    var result = pointer.aligned_simd_load[width, alignment]()
+    var result = pointer.load[width=width]()
     
     @parameter
     fn add[i: Int]():
@@ -22,7 +21,7 @@ fn _sum[width: Int, alignment: Int, loops: Int, D: DType](pointer: DTypePointer[
     return result
 
 @always_inline
-fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
+fn simd_prefix_sum[D: DType](inout array: List[SIMD[D, 1]]):
     
     @parameter 
     fn inner_func[width: Int, alignment: Int, loops: Int]():
@@ -32,9 +31,9 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
         var i = 0
 
         while i + width <= length:
-            let part = _sum[width, alignment, loops, D](numbers.offset(i), c)
+            var part = _sum[width, alignment, loops, D](numbers.offset(i), c)
             c = part[width - 1]
-            numbers.simd_store(i, part)
+            numbers.store(i, part)
             i += width
 
         @parameter
@@ -42,9 +41,9 @@ fn simd_prefix_sum[D: DType](inout array: DynamicVector[SIMD[D, 1]]):
             alias index = round + 1
             alias w = width >> index
             if i + w <= length:
-                let part = _sum[w, alignment, loops - index, D](numbers.offset(i), c)
+                var part = _sum[w, alignment, loops - index, D](numbers.offset(i), c)
                 c = part[w - 1]
-                numbers.simd_store(i, part)
+                numbers.store(i, part)
                 i += w    
 
         unroll[add_rest, loops]()

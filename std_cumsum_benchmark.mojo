@@ -1,23 +1,22 @@
 from algorithm import cumsum
 from time import now
 from math import min
-from math.limit import max_or_inf
 from prefix_sum import scalar_prefix_sum, simd_prefix_sum
 from prefix_sum_benchmark import benchmark
 from csv import CsvBuilder
-from utils.list import Dim
+from buffer import Dim, Buffer
 
-fn benchmark_other[size: Int, D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]) -> None](name: StringLiteral, inout csv_builder: CsvBuilder):
-    var min_duration = max_or_inf[DType.int64]()
+fn benchmark_other[size: Int, D: DType, func: fn(inout List[SIMD[D, 1]]) -> None](name: StringLiteral, inout csv_builder: CsvBuilder):
+    var min_duration = 1_000_000_000
     var value = 0
     for _ in range(10):
-        var v1 = DynamicVector[SIMD[D, 1]](capacity=size)
+        var v1 = List[SIMD[D, 1]](size)
         v1.resize(size, 0)
         for i in range(size):
             v1[i] = i % 4 == 0
-        let tik = now()
+        var tik = now()
         func(v1)
-        let tok = now()
+        var tok = now()
         min_duration = min(min_duration, tok - tik)
         value = v1[size - 1].to_int()
 
@@ -25,22 +24,22 @@ fn benchmark_other[size: Int, D: DType, func: fn(inout DynamicVector[SIMD[D, 1]]
     csv_builder.push(size)
     csv_builder.push(value)
     csv_builder.push(min_duration)
-    csv_builder.push( Float64(min_duration.to_int()) / Float64(size))
+    csv_builder.push( Float64(min_duration) / Float64(size))
 
 fn benchmark_std[size: Int, D: DType](inout csv_builder: CsvBuilder):
-    var min_duration = max_or_inf[DType.uint64]()
+    var min_duration = 1_000_000_000
     var value = 0
     for _ in range(10):
-        let p1 = DTypePointer[D].alloc(size)
-        let b1 = Buffer[D, Dim(size)](p1)
-        let p2 = DTypePointer[D].alloc(size)
-        let b2 = Buffer[D, Dim(size)](p2)
+        var p1 = DTypePointer[D].alloc(size)
+        var b1 = Buffer[D, Dim(size)](p1)
+        var p2 = DTypePointer[D].alloc(size)
+        var b2 = Buffer[D, Dim(size)](p2)
         for i in range(size):
             b1[i] = i % 4 == 0
         
-        let tik = now()
+        var tik = now()
         cumsum(b2, b1)
-        let tok = now()
+        var tok = now()
         min_duration = min(min_duration, tok - tik)
         value = b2[size - 1].to_int()
 
@@ -48,7 +47,7 @@ fn benchmark_std[size: Int, D: DType](inout csv_builder: CsvBuilder):
     csv_builder.push(size)
     csv_builder.push(value)
     csv_builder.push(min_duration)
-    csv_builder.push(Float64(min_duration.to_int()) / Float64(size))
+    csv_builder.push(Float64(min_duration) / Float64(size))
 
 fn main():
     var csv_builder = CsvBuilder(5)

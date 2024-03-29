@@ -2,12 +2,12 @@ from prefix_sum import scalar_prefix_sum, simd_prefix_sum
 
 fn main():
     alias D = DType.uint64
-    let length = (1 << 8) + 157
-    var v1 = DynamicVector[SIMD[D, 1]](capacity=length)
-    var v2 = DynamicVector[SIMD[D, 1]](capacity=length)
+    var length = (1 << 8) + 157
+    var v1 = List[SIMD[D, 1]](length)
+    var v2 = List[SIMD[D, 1]](length)
     for i in range(1, length + 1):
-        v1.push_back(i)
-        v2.push_back(i)
+        v1.append(i)
+        v2.append(i)
 
     scalar_prefix_sum[D](v1)
     simd_prefix_sum[D](v2)
